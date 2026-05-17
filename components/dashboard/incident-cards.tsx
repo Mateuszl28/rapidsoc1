@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -42,9 +43,10 @@ export function IncidentCards({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.04 }}
         >
-          <button
-            onClick={() => onSelect?.(inc.id)}
-            className="w-full text-left"
+          <Link
+            href={`/incidents/${inc.id}`}
+            onMouseEnter={() => onSelect?.(inc.id)}
+            className="block"
           >
             <Card
               className={cn(
@@ -109,7 +111,7 @@ export function IncidentCards({
                 </span>
               </div>
             </Card>
-          </button>
+          </Link>
         </motion.div>
       ))}
     </div>

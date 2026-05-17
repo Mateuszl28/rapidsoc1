@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -14,22 +16,31 @@ import {
   Activity,
 } from "lucide-react";
 
-const NAV = [
-  { icon: LayoutDashboard, label: "Overview",     badge: null,        active: true  },
-  { icon: ShieldAlert,     label: "Incidents",    badge: "4",         active: false },
-  { icon: Radar,           label: "Detections",   badge: "live",      active: false },
-  { icon: Network,         label: "Kill Chain",   badge: null,        active: false },
-  { icon: Activity,        label: "Hunting",      badge: null,        active: false },
-  { icon: FileText,        label: "Reports",      badge: null,        active: false },
-  { icon: Wrench,          label: "Playbooks",    badge: null,        active: false },
-  { icon: Server,          label: "Assets",       badge: "247",       active: false },
-  { icon: Globe2,          label: "Threat Intel", badge: null,        active: false },
+interface NavItem {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  badge: string | null;
+  href: string;
+  match?: (path: string) => boolean;
+}
+
+const NAV: NavItem[] = [
+  { icon: LayoutDashboard, label: "Overview",     badge: null,   href: "/" },
+  { icon: ShieldAlert,     label: "Incidents",    badge: "4",    href: "/incidents/INC-2041", match: (p) => p.startsWith("/incidents") },
+  { icon: Radar,           label: "Detections",   badge: "live", href: "/" },
+  { icon: Network,         label: "Kill Chain",   badge: null,   href: "/incidents/INC-2041" },
+  { icon: Activity,        label: "Hunting",      badge: "ql",   href: "/hunt", match: (p) => p.startsWith("/hunt") },
+  { icon: FileText,        label: "Reports",      badge: null,   href: "/" },
+  { icon: Wrench,          label: "Playbooks",    badge: null,   href: "/incidents/INC-2041" },
+  { icon: Server,          label: "Assets",       badge: "247",  href: "/" },
+  { icon: Globe2,          label: "Threat Intel", badge: null,   href: "/" },
 ];
 
 export function Sidebar() {
+  const pathname = usePathname() || "/";
   return (
     <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r border-border/40 bg-card/40 backdrop-blur-sm">
-      <div className="flex h-14 items-center gap-2 px-4 border-b border-border/40">
+      <Link href="/" className="flex h-14 items-center gap-2 px-4 border-b border-border/40 hover:bg-accent/40 transition-colors">
         <div className="relative h-7 w-7 rounded-md bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center shadow-[0_0_20px_-4px_hsl(180_100%_55%/0.7)]">
           <ShieldAlert className="h-4 w-4 text-background" />
           <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-neon-green animate-pulse-glow" />
@@ -40,34 +51,40 @@ export function Sidebar() {
             SOC · v1.0
           </div>
         </div>
-      </div>
+      </Link>
 
       <nav className="flex-1 p-2 space-y-0.5">
-        {NAV.map(({ icon: Icon, label, badge, active }) => (
-          <button
-            key={label}
-            className={cn(
-              "w-full flex items-center gap-2.5 rounded-md px-2.5 py-2 text-xs font-medium transition-colors",
-              "hover:bg-accent hover:text-accent-foreground text-muted-foreground",
-              active && "bg-accent text-foreground"
-            )}
-          >
-            <Icon className="h-3.5 w-3.5" />
-            <span className="flex-1 text-left">{label}</span>
-            {badge && (
-              <span
-                className={cn(
-                  "text-[9px] px-1.5 py-0.5 rounded uppercase tracking-wider font-bold",
-                  badge === "live"
-                    ? "bg-neon-green/15 text-neon-green animate-pulse-glow"
-                    : "bg-muted text-muted-foreground"
-                )}
-              >
-                {badge}
-              </span>
-            )}
-          </button>
-        ))}
+        {NAV.map(({ icon: Icon, label, badge, href, match }) => {
+          const active = match ? match(pathname) : pathname === href;
+          return (
+            <Link
+              key={label}
+              href={href}
+              className={cn(
+                "w-full flex items-center gap-2.5 rounded-md px-2.5 py-2 text-xs font-medium transition-colors",
+                "hover:bg-accent hover:text-accent-foreground text-muted-foreground",
+                active && "bg-accent text-foreground"
+              )}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              <span className="flex-1">{label}</span>
+              {badge && (
+                <span
+                  className={cn(
+                    "text-[9px] px-1.5 py-0.5 rounded uppercase tracking-wider font-bold",
+                    badge === "live"
+                      ? "bg-neon-green/15 text-neon-green animate-pulse-glow"
+                      : badge === "ql"
+                      ? "bg-neon-purple/15 text-neon-purple"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  {badge}
+                </span>
+              )}
+            </Link>
+          );
+        })}
       </nav>
 
       <div className="p-2 border-t border-border/40">
