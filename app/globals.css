@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Enterprise dark theme — tuned for long-stare SOC use */
+    --background: 222 36% 5%;
+    --foreground: 210 25% 92%;
+
+    --card: 222 30% 7%;
+    --card-foreground: 210 25% 92%;
+
+    --popover: 222 30% 8%;
+    --popover-foreground: 210 25% 92%;
+
+    --primary: 180 100% 55%;          /* neon cyan */
+    --primary-foreground: 222 47% 6%;
+
+    --secondary: 222 25% 12%;
+    --secondary-foreground: 210 25% 92%;
+
+    --muted: 222 22% 11%;
+    --muted-foreground: 215 16% 60%;
+
+    --accent: 222 25% 14%;
+    --accent-foreground: 210 25% 92%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 22% 18%;
+    --input: 222 22% 18%;
+    --ring: 180 100% 55%;
+
+    --radius: 0.6rem;
+  }
+
+  /* hard-set dark always, this is a SOC product */
+  html { color-scheme: dark; }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+    background-image:
+      radial-gradient(1200px 600px at 0% 0%,   hsl(180 100% 55% / 0.06), transparent 60%),
+      radial-gradient(900px  600px at 100% 0%, hsl(270 90% 65% / 0.06), transparent 60%),
+      radial-gradient(900px  600px at 50% 100%, hsl(0 84% 60% / 0.05), transparent 60%);
+    background-attachment: fixed;
+  }
+
+  /* subtle grid overlay across the whole app */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.18) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.18) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    z-index: 0;
+    opacity: 0.35;
+  }
+}
+
+@layer components {
+  .glow-cyan   { box-shadow: 0 0 0 1px hsl(180 100% 55% / 0.4), 0 0 24px -6px hsl(180 100% 55% / 0.55); }
+  .glow-red    { box-shadow: 0 0 0 1px hsl(0 84% 60% / 0.4),   0 0 24px -6px hsl(0 84% 60% / 0.55);   }
+  .glow-purple { box-shadow: 0 0 0 1px hsl(270 90% 65% / 0.4), 0 0 24px -6px hsl(270 90% 65% / 0.55); }
+
+  .terminal {
+    @apply font-mono text-xs leading-relaxed;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        hsl(222 30% 6%) 0,
+        hsl(222 30% 6%) 22px,
+        hsl(222 30% 7%) 22px,
+        hsl(222 30% 7%) 23px
+      );
+  }
+
+  .scan-line::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      hsl(180 100% 55% / 0.08) 50%,
+      transparent 100%
+    );
+    height: 30%;
+    animation: scan 6s linear infinite;
+  }
+
+  .shimmer-bg {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted) / 0.4) 0%,
+      hsl(var(--muted) / 0.7) 50%,
+      hsl(var(--muted) / 0.4) 100%
+    );
+    background-size: 1000px 100%;
+    @apply animate-shimmer;
+  }
+
+  .prose-soc h1 { @apply text-base font-semibold mt-3 mb-1 text-foreground; }
+  .prose-soc h2 { @apply text-sm font-semibold mt-3 mb-1 text-neon-cyan; }
+  .prose-soc h3 { @apply text-xs font-semibold mt-2 mb-1 text-foreground/90; }
+  .prose-soc p  { @apply text-xs my-1 text-foreground/85; }
+  .prose-soc ul { @apply text-xs my-1 list-disc pl-5 space-y-0.5 text-foreground/85; }
+  .prose-soc ol { @apply text-xs my-1 list-decimal pl-5 space-y-0.5 text-foreground/85; }
+  .prose-soc li { @apply text-xs; }
+  .prose-soc code { @apply text-[11px] font-mono px-1 py-px rounded bg-muted/70 text-neon-cyan; }
+  .prose-soc strong { @apply text-foreground; }
+  .prose-soc hr { @apply my-2 border-border/40; }
+  .prose-soc a { @apply text-neon-cyan underline; }
+}
+
+/* Custom scrollbar — dark, slim */
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.4); }
