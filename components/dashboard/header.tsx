@@ -31,16 +31,22 @@ export function Header() {
         <span>posture: elevated</span>
       </div>
 
-      <div className="flex-1 max-w-md mx-auto relative">
+      <button
+        onClick={() => {
+          window.dispatchEvent(
+            new KeyboardEvent("keydown", { key: "k", ctrlKey: true, metaKey: true })
+          );
+        }}
+        className="flex-1 max-w-md mx-auto relative group"
+      >
         <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-        <input
-          placeholder="Search events, hosts, IOCs, MITRE…"
-          className="w-full h-8 pl-8 pr-3 rounded-md bg-muted/40 border border-border/40 text-xs placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-ring"
-        />
+        <div className="w-full h-8 pl-8 pr-12 flex items-center rounded-md bg-muted/40 border border-border/40 text-xs text-muted-foreground/60 group-hover:bg-muted/60 transition-colors">
+          Search events, hosts, IOCs, MITRE…
+        </div>
         <kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] px-1.5 py-0.5 rounded bg-background border border-border/60 text-muted-foreground font-mono">
           ⌘K
         </kbd>
-      </div>
+      </button>
 
       <div className="flex items-center gap-3">
         <Badge variant="success" className="gap-1.5">

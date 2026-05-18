@@ -20,6 +20,8 @@ import {
   Terminal,
   TrendingUp,
   Loader2,
+  Wand2,
+  X,
 } from "lucide-react";
 
 interface QueryResultDTO {
@@ -48,6 +50,10 @@ export function HuntConsole() {
   const [saved, setSaved] = useState<{ label: string; query: string }[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [tokenSuggest, setTokenSuggest] = useState<string[]>([]);
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiBuilding, setAiBuilding] = useState(false);
+  const [aiRationale, setAiRationale] = useState<string[]>([]);
 
   const run = async (q: string = query) => {
     setRunning(true);
@@ -136,6 +142,29 @@ export function HuntConsole() {
     setSaved((s) => [{ label, query }, ...s].slice(0, 12));
   };
 
+  const buildWithAI = async () => {
+    const p = aiPrompt.trim();
+    if (!p) return;
+    setAiBuilding(true);
+    setAiRationale([]);
+    try {
+      const res = await fetch("/api/build-query", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ prompt: p }),
+      });
+      const json = (await res.json()) as { query: string; rationale: string[] };
+      setQuery(json.query);
+      setAiRationale(json.rationale);
+      // run immediately so user sees the result
+      run(json.query);
+    } catch (e) {
+      setAiRationale([`Error: ${(e as Error).message}`]);
+    } finally {
+      setAiBuilding(false);
+    }
+  };
+
   const stats = useMemo(() => {
     if (!result?.rows.length) return null;
     const sev: Record<Severity, number> = { critical: 0, high: 0, medium: 0, low: 0, info: 0 };
@@ -178,6 +207,15 @@ export function HuntConsole() {
               </Button>
               <Button
                 size="sm"
+                variant="outline"
+                className="h-7 px-2 text-xs"
+                onClick={() => setAiOpen((o) => !o)}
+              >
+                <Wand2 className="h-3 w-3 text-neon-purple" />
+                Ask AI
+              </Button>
+              <Button
+                size="sm"
                 variant="neon"
                 className="h-7 px-2 text-xs"
                 onClick={() => run(query)}
@@ -187,6 +225,87 @@ export function HuntConsole() {
                 Run
               </Button>
             </div>
+
+            {aiOpen && (
+              <div className="rounded-md border border-neon-purple/40 bg-neon-purple/5 p-3 space-y-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-1.5 text-xs">
+                    <Sparkles className="h-3.5 w-3.5 text-neon-purple" />
+                    <span className="font-semibold">AI query builder</span>
+                    <Badge variant="outline">beta</Badge>
+                  </div>
+                  <button
+                    onClick={() => setAiOpen(false)}
+                    className="text-muted-foreground hover:text-foreground"
+                    aria-label="Close"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                <textarea
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                      e.preventDefault();
+                      buildWithAI();
+                    }
+                  }}
+                  rows={2}
+                  placeholder="Describe in plain English what you want to find — e.g. 'critical events on the jumpbox involving LSASS in the last 24h, top 50'"
+                  className="w-full resize-none rounded-md bg-background/60 border border-border/40 px-3 py-2 text-xs placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-ring"
+                />
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="neon"
+                    className="h-7 px-2 text-xs"
+                    onClick={buildWithAI}
+                    disabled={aiBuilding || !aiPrompt.trim()}
+                  >
+                    {aiBuilding
+                      ? <Loader2 className="h-3 w-3 animate-spin" />
+                      : <Sparkles className="h-3 w-3" />}
+                    Build query
+                  </Button>
+                  <span className="text-[10px] text-muted-foreground font-mono">
+                    Cmd/Ctrl + ↵ to submit
+                  </span>
+                </div>
+                {aiRationale.length > 0 && (
+                  <div className="text-[10px] text-muted-foreground border-t border-border/40 pt-2 space-y-0.5">
+                    <div className="uppercase tracking-widest text-neon-purple">Reasoning</div>
+                    <ul className="list-disc pl-4">
+                      {aiRationale.map((r, i) => (
+                        <li key={i}>
+                          {r.split("`").map((seg, j) =>
+                            j % 2 === 1
+                              ? <code key={j} className="font-mono text-foreground/90 bg-muted/40 px-1 rounded">{seg}</code>
+                              : <span key={j}>{seg}</span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    "Critical events on the jumpbox involving LSASS",
+                    "Anything resembling beaconing on network category",
+                    "PowerShell with score above 80",
+                    "Top 25 cloud findings, high severity",
+                  ].map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => setAiPrompt(s)}
+                      className="text-[10px] px-1.5 py-0.5 rounded border border-border/40 text-muted-foreground hover:text-foreground hover:bg-accent/40"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {tokenSuggest.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
