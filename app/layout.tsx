@@ -7,11 +7,34 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
-  title: "Sentinel AI — Autonomous SOC",
+  metadataBase: new URL("https://sentinel.acme.io"),
+  title: {
+    default: "Sentinel AI — Autonomous SOC",
+    template: "%s · Sentinel AI",
+  },
   description:
-    "AI-powered Security Operations Center. Real-time threat detection, multi-agent triage, and remediation powered by Claude.",
+    "Your enterprise SOC, on autopilot. Real-time threat detection, kill-chain reconstruction, and AI-generated remediation — multi-agent workflow built with the Vercel AI SDK.",
   applicationName: "Sentinel AI",
-  keywords: ["SOC", "SIEM", "AI", "cybersecurity", "Claude", "incident response"],
+  keywords: [
+    "SOC", "SIEM", "AI", "cybersecurity", "incident response",
+    "threat detection", "remediation", "MITRE ATT&CK", "Next.js",
+    "Vercel AI SDK",
+  ],
+  authors: [{ name: "Sentinel AI" }],
+  openGraph: {
+    type: "website",
+    title: "Sentinel AI — Autonomous SOC",
+    description:
+      "Real-time threat detection, kill-chain reconstruction, and AI-generated remediation.",
+    siteName: "Sentinel AI",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sentinel AI — Autonomous SOC",
+    description:
+      "Real-time threat detection, kill-chain reconstruction, and AI-generated remediation.",
+  },
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {

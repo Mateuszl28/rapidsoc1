@@ -14,6 +14,8 @@ import {
   Globe2,
   Settings,
   Activity,
+  ScrollText,
+  Tv2,
 } from "lucide-react";
 
 interface NavItem {
@@ -28,12 +30,13 @@ const NAV: NavItem[] = [
   { icon: LayoutDashboard, label: "Overview",     badge: null,   href: "/" },
   { icon: ShieldAlert,     label: "Incidents",    badge: "4",    href: "/incidents",        match: (p) => p.startsWith("/incidents") },
   { icon: Radar,           label: "Detections",   badge: "live", href: "/" },
-  { icon: Network,         label: "Kill Chain",   badge: null,   href: "/incidents/INC-2041" },
   { icon: Activity,        label: "Hunting",      badge: "ql",   href: "/hunt",             match: (p) => p.startsWith("/hunt") },
-  { icon: FileText,        label: "Reports",      badge: null,   href: "/incidents/INC-2041" },
-  { icon: Wrench,          label: "Playbooks",    badge: null,   href: "/incidents/INC-2041" },
   { icon: Server,          label: "Assets",       badge: "247",  href: "/assets",           match: (p) => p.startsWith("/assets") },
   { icon: Globe2,          label: "Threat Intel", badge: null,   href: "/threat-intel",     match: (p) => p.startsWith("/threat-intel") },
+  { icon: FileText,        label: "Reports",      badge: null,   href: "/reports",          match: (p) => p.startsWith("/reports") },
+  { icon: ScrollText,      label: "Compliance",   badge: null,   href: "/compliance",       match: (p) => p.startsWith("/compliance") },
+  { icon: Tv2,             label: "War Room",     badge: "tv",   href: "/wall",             match: (p) => p.startsWith("/wall") },
+  { icon: Wrench,          label: "Playbooks",    badge: null,   href: "/incidents/INC-2041" },
 ];
 
 export function Sidebar() {
@@ -76,6 +79,8 @@ export function Sidebar() {
                       ? "bg-neon-green/15 text-neon-green animate-pulse-glow"
                       : badge === "ql"
                       ? "bg-neon-purple/15 text-neon-purple"
+                      : badge === "tv"
+                      ? "bg-severity-critical/15 text-severity-critical"
                       : "bg-muted text-muted-foreground"
                   )}
                 >

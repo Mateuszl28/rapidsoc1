@@ -7,22 +7,26 @@ import { cn } from "@/lib/utils";
 import { SEED_INCIDENTS, ASSETS } from "@/lib/mock-data";
 import { HUNT_EXAMPLES } from "@/lib/hunt-engine";
 import { THREAT_ACTORS } from "@/lib/threat-intel";
+import { REPORTS } from "@/lib/reports";
 import {
   AlertTriangle,
   Crosshair,
+  FileText,
   LayoutDashboard,
   Network,
   Radar,
+  ScrollText,
   Search,
   Server,
   ShieldAlert,
   Skull,
   Sparkles,
   Terminal,
+  Tv2,
   Globe2,
 } from "lucide-react";
 
-type ResultKind = "nav" | "incident" | "asset" | "actor" | "hunt" | "action";
+type ResultKind = "nav" | "incident" | "asset" | "actor" | "hunt" | "action" | "report";
 
 interface Result {
   id: string;
@@ -42,6 +46,7 @@ const KIND_ACCENT: Record<ResultKind, string> = {
   actor: "text-severity-high",
   hunt: "text-neon-green",
   action: "text-neon-pink",
+  report: "text-severity-info",
 };
 
 const KIND_LABEL: Record<ResultKind, string> = {
@@ -51,6 +56,7 @@ const KIND_LABEL: Record<ResultKind, string> = {
   actor: "Threat actors",
   hunt: "Hunt queries",
   action: "Actions",
+  report: "Reports",
 };
 
 export function CommandPalette() {
@@ -84,11 +90,14 @@ export function CommandPalette() {
 
   const all = useMemo<Result[]>(() => {
     const nav: Result[] = [
-      { id: "nav-overview",  kind: "nav", label: "Overview",        sub: "/",              href: "/",              icon: LayoutDashboard, keywords: "overview home dashboard" },
-      { id: "nav-incidents", kind: "nav", label: "Incidents",       sub: "/incidents",     href: "/incidents",     icon: ShieldAlert,     keywords: "incidents list" },
-      { id: "nav-hunt",      kind: "nav", label: "Threat hunting",  sub: "/hunt",          href: "/hunt",          icon: Terminal,        keywords: "hunt search query soc-ql" },
-      { id: "nav-assets",    kind: "nav", label: "Assets",          sub: "/assets",        href: "/assets",        icon: Server,          keywords: "assets hosts inventory" },
-      { id: "nav-ti",        kind: "nav", label: "Threat intel",    sub: "/threat-intel",  href: "/threat-intel",  icon: Globe2,          keywords: "threat intel actors campaigns ioc mitre" },
+      { id: "nav-overview",   kind: "nav", label: "Overview",        sub: "/",              href: "/",              icon: LayoutDashboard, keywords: "overview home dashboard" },
+      { id: "nav-incidents",  kind: "nav", label: "Incidents",       sub: "/incidents",     href: "/incidents",     icon: ShieldAlert,     keywords: "incidents list triage" },
+      { id: "nav-hunt",       kind: "nav", label: "Threat hunting",  sub: "/hunt",          href: "/hunt",          icon: Terminal,        keywords: "hunt search query soc-ql" },
+      { id: "nav-assets",     kind: "nav", label: "Assets",          sub: "/assets",        href: "/assets",        icon: Server,          keywords: "assets hosts inventory" },
+      { id: "nav-ti",         kind: "nav", label: "Threat intel",    sub: "/threat-intel",  href: "/threat-intel",  icon: Globe2,          keywords: "threat intel actors campaigns ioc mitre" },
+      { id: "nav-reports",    kind: "nav", label: "Reports",         sub: "/reports",       href: "/reports",       icon: FileText,        keywords: "reports incident report executive markdown" },
+      { id: "nav-compliance", kind: "nav", label: "Compliance",      sub: "/compliance",    href: "/compliance",    icon: ScrollText,      keywords: "compliance gdpr pci soc2 nis2 iso27001 audit controls" },
+      { id: "nav-wall",       kind: "nav", label: "War room (TV)",   sub: "/wall",          href: "/wall",          icon: Tv2,             keywords: "wall war room tv display demo presentation" },
     ];
     const incidents: Result[] = SEED_INCIDENTS.map((i) => ({
       id: `inc-${i.id}`,
@@ -117,6 +126,15 @@ export function CommandPalette() {
       icon: Skull,
       keywords: `${a.name} ${a.aliases.join(" ")} ${a.origin}`,
     }));
+    const reports: Result[] = REPORTS.map((r) => ({
+      id: `rpt-${r.id}`,
+      kind: "report",
+      label: r.title,
+      sub: `${r.id} · ${r.audience} · ${r.status}`,
+      href: `/reports/${r.id}`,
+      icon: FileText,
+      keywords: `${r.id} ${r.incidentId} ${r.title} ${r.tags.join(" ")} ${r.audience}`,
+    }));
     const hunts: Result[] = HUNT_EXAMPLES.map((h, i) => ({
       id: `hunt-${i}`,
       kind: "hunt",
@@ -132,7 +150,7 @@ export function CommandPalette() {
       { id: "act-hunt-go", kind: "action", label: "New threat hunt", sub: "open the SOC-QL console", href: "/hunt", icon: Radar,
         keywords: "search query investigate" },
     ];
-    return [...nav, ...incidents, ...assets, ...actors, ...hunts, ...actions];
+    return [...nav, ...incidents, ...assets, ...actors, ...reports, ...hunts, ...actions];
   }, []);
 
   const filtered = useMemo(() => {
