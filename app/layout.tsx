@@ -2,6 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { CommandPalette } from "@/components/dashboard/command-palette";
+import { Notifications } from "@/components/dashboard/notifications";
+import { ProductTour } from "@/components/dashboard/tour";
+import { ShortcutsHelp } from "@/components/dashboard/shortcuts-help";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
@@ -53,6 +56,9 @@ export default function RootLayout({
       <body className={`${inter.variable} ${mono.variable} font-sans relative`}>
         <div className="relative z-10 min-h-screen">{children}</div>
         <CommandPalette />
+        <Notifications />
+        <ShortcutsHelp />
+        <ProductTour />
       </body>
     </html>
   );

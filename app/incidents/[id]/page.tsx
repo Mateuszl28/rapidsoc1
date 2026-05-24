@@ -123,8 +123,12 @@ export default function IncidentDetailPage() {
 
           {/* Agents + Chat */}
           <section className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-            <AgentPanel incidentContext={context} />
-            <AgentChat incidentContext={context} />
+            <div data-tour="agents">
+              <AgentPanel incidentContext={context} />
+            </div>
+            <div data-tour="chat">
+              <AgentChat incidentContext={context} />
+            </div>
           </section>
 
           {/* Attack graph + Timeline */}

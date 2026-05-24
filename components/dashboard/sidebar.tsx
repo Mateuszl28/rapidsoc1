@@ -63,6 +63,7 @@ export function Sidebar() {
             <Link
               key={label}
               href={href}
+              data-tour={label === "War Room" ? "wall-link" : undefined}
               className={cn(
                 "w-full flex items-center gap-2.5 rounded-md px-2.5 py-2 text-xs font-medium transition-colors",
                 "hover:bg-accent hover:text-accent-foreground text-muted-foreground",
@@ -93,10 +94,16 @@ export function Sidebar() {
       </nav>
 
       <div className="p-2 border-t border-border/40">
-        <button className="w-full flex items-center gap-2.5 rounded-md px-2.5 py-2 text-xs text-muted-foreground hover:bg-accent">
+        <Link
+          href="/settings"
+          className={cn(
+            "w-full flex items-center gap-2.5 rounded-md px-2.5 py-2 text-xs text-muted-foreground hover:bg-accent",
+            pathname.startsWith("/settings") && "bg-accent text-foreground"
+          )}
+        >
           <Settings className="h-3.5 w-3.5" />
           Settings
-        </button>
+        </Link>
         <div className="mt-2 mx-2 p-2 rounded-md bg-muted/40 border border-border/40">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
             Tenant

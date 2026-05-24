@@ -29,7 +29,9 @@ export default function HuntPage() {
             </div>
           </div>
 
-          <HuntConsole />
+          <div data-tour="hunt">
+            <HuntConsole />
+          </div>
         </main>
       </div>
     </div>

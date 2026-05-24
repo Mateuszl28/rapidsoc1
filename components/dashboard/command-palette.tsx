@@ -18,6 +18,7 @@ import {
   ScrollText,
   Search,
   Server,
+  Settings as SettingsIcon,
   ShieldAlert,
   Skull,
   Sparkles,
@@ -98,6 +99,7 @@ export function CommandPalette() {
       { id: "nav-reports",    kind: "nav", label: "Reports",         sub: "/reports",       href: "/reports",       icon: FileText,        keywords: "reports incident report executive markdown" },
       { id: "nav-compliance", kind: "nav", label: "Compliance",      sub: "/compliance",    href: "/compliance",    icon: ScrollText,      keywords: "compliance gdpr pci soc2 nis2 iso27001 audit controls" },
       { id: "nav-wall",       kind: "nav", label: "War room (TV)",   sub: "/wall",          href: "/wall",          icon: Tv2,             keywords: "wall war room tv display demo presentation" },
+      { id: "nav-settings",   kind: "nav", label: "Settings",        sub: "/settings",      href: "/settings",      icon: SettingsIcon,    keywords: "settings preferences agent config integrations retention" },
     ];
     const incidents: Result[] = SEED_INCIDENTS.map((i) => ({
       id: `inc-${i.id}`,
@@ -149,6 +151,12 @@ export function CommandPalette() {
         href: "/incidents/INC-2041", icon: Sparkles, keywords: "run agents triage" },
       { id: "act-hunt-go", kind: "action", label: "New threat hunt", sub: "open the SOC-QL console", href: "/hunt", icon: Radar,
         keywords: "search query investigate" },
+      { id: "act-tour", kind: "action", label: "Take the product tour", sub: "guided walkthrough of the dashboard",
+        action: () => window.dispatchEvent(new CustomEvent("sentinel:tour")), icon: Sparkles, keywords: "tour onboarding help walkthrough demo" },
+      { id: "act-help", kind: "action", label: "Show keyboard shortcuts", sub: "press ? anywhere",
+        action: () => window.dispatchEvent(new CustomEvent("sentinel:help")), icon: Terminal, keywords: "help shortcuts hotkeys keyboard" },
+      { id: "act-notif", kind: "action", label: "Open notifications", sub: "press n",
+        action: () => window.dispatchEvent(new CustomEvent("sentinel:notifications")), icon: AlertTriangle, keywords: "notifications alerts bell" },
     ];
     return [...nav, ...incidents, ...assets, ...actors, ...reports, ...hunts, ...actions];
   }, []);

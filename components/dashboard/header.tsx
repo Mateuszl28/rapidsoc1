@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, Bell, ShieldCheck, Activity, Clock } from "lucide-react";
+import { Search, Bell, ShieldCheck, Activity, Clock, HelpCircle, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { startTour } from "./tour";
 
 export function Header() {
   const [time, setTime] = useState<string>("");
@@ -32,6 +33,7 @@ export function Header() {
       </div>
 
       <button
+        data-tour="cmdk"
         onClick={() => {
           window.dispatchEvent(
             new KeyboardEvent("keydown", { key: "k", ctrlKey: true, metaKey: true })
@@ -67,7 +69,33 @@ export function Header() {
           <span className="text-border">UTC</span>
         </div>
 
-        <Button variant="ghost" size="icon" className="relative">
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 text-xs hidden md:inline-flex"
+          onClick={() => startTour()}
+          title="Take the product tour"
+        >
+          <Sparkles className="h-3 w-3" />
+          Tour
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => window.dispatchEvent(new CustomEvent("sentinel:help"))}
+          title="Keyboard shortcuts (?)"
+        >
+          <HelpCircle className="h-4 w-4" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative"
+          onClick={() => window.dispatchEvent(new CustomEvent("sentinel:notifications"))}
+          title="Notifications"
+        >
           <Bell className="h-4 w-4" />
           <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-severity-critical animate-pulse-glow" />
         </Button>
